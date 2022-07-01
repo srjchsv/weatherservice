@@ -25,13 +25,13 @@ func WeatherService(ctx *gin.Context, location string) ([]utils.Data, error) {
 	for _, api := range services {
 		wg.Add(1)
 		go func(api func(ctx *gin.Context, location string) (utils.Data, error)) error {
-			mu.Lock()
 			defer wg.Done()
 			defer mu.Unlock()
 			data, err := api(ctx, location)
 			if err != nil {
 				return err
 			}
+			mu.Lock()
 			weatherChan = append(weatherChan, data)
 
 			return nil
