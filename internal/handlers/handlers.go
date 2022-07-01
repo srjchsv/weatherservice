@@ -6,11 +6,11 @@ import (
 	"regexp"
 
 	"github.com/gin-gonic/gin"
-	"github.com/srjchsv/weatherservice/internal/weatherservice"
+	"github.com/srjchsv/weatherservice/internal/api"
 )
 
 func GetLocation(ctx *gin.Context) {
-	r, err := regexp.Compile(`^[a-zA-z]{0,20}$`)
+	r, err := regexp.Compile(`^[a-zA-Z',.\s-]{1,25}$`)
 	if err != nil {
 		ctx.String(http.StatusBadRequest, "Bad request")
 		return
@@ -18,15 +18,17 @@ func GetLocation(ctx *gin.Context) {
 
 	location := ctx.Query("location")
 
-	if r.MatchString(location) {
-		weatherData, err := weatherservice.WeatherService(ctx, location)
+	if len(location) == 0 {
+		ctx.HTML(http.StatusOK, "index.html", gin.H{})
+	} else if r.MatchString(location) {
+		weatherData, err := api.WeatherService(ctx, location)
 		if err != nil {
 			ctx.String(http.StatusInternalServerError, fmt.Sprintln(err))
 		}
 
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
-			"weatherData":   weatherData,
-			"locationCheck": location,
+			"weatherData": weatherData,
+			"location":    location,
 		})
 
 	} else {

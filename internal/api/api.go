@@ -1,12 +1,10 @@
-package weatherservice
+package api
 
 import (
 	"sync"
 
 	"github.com/gin-gonic/gin"
-	"github.com/srjchsv/weatherservice/internal/client/openweathermap"
-	"github.com/srjchsv/weatherservice/internal/client/weatherapi"
-	"github.com/srjchsv/weatherservice/internal/client/yahoo"
+	"github.com/srjchsv/weatherservice/internal/client/weatherservices"
 	"github.com/srjchsv/weatherservice/pkg/utils"
 )
 
@@ -19,9 +17,9 @@ func WeatherService(ctx *gin.Context, location string) ([]utils.Data, error) {
 	weatherChan := []utils.Data{}
 
 	services := []func(ctx *gin.Context, location string) (utils.Data, error){
-		weatherapi.WeatherApi,
-		yahoo.YahooWeatherApi,
-		openweathermap.OpenWeatherMapApi,
+		weatherservices.WeatherApi,
+		weatherservices.YahooWeatherApi,
+		weatherservices.OpenWeatherMapApi,
 	}
 
 	for _, api := range services {

@@ -1,9 +1,9 @@
-package yahoo
+package weatherservices
 
 import (
 	"encoding/json"
 	"io/ioutil"
-	"net/http"
+	"net/url"
 
 	"github.com/gin-gonic/gin"
 	"github.com/srjchsv/weatherservice/pkg/utils"
@@ -21,22 +21,11 @@ type YahooResponseStruct struct {
 }
 
 func YahooWeatherApi(ctx *gin.Context, location string) (utils.Data, error) {
-	apiConfig, err := utils.LoadApiConfig(ctx, "./configs/.configs")
-	if err != nil {
-		return utils.Data{}, err
-	}
 
-	url := "https://yahoo-weather5.p.rapidapi.com/weather?location=" + location + "&format=json&u=c"
+	url := "https://yahoo-weather5.p.rapidapi.com/weather?location=" + url.QueryEscape(location) + "&format=json&u=c"
+	apiHost := "yahoo-weather5.p.rapidapi.com"
 
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return utils.Data{}, err
-	}
-
-	req.Header.Add("X-RapidAPI-Key", apiConfig.OpenWeatherMapApiKey)
-	req.Header.Add("X-RapidAPI-Host", "yahoo-weather5.p.rapidapi.com")
-
-	res, err := http.DefaultClient.Do(req)
+	res, err := utils.RequestResponseRapidApi(ctx, url, apiHost)
 	if err != nil {
 		return utils.Data{}, err
 	}
@@ -57,6 +46,13 @@ func YahooWeatherApi(ctx *gin.Context, location string) (utils.Data, error) {
 	return stdData, nil
 
 }
+
+////++=============////++=============
+////++=============////++=============
+////++=============////++=============
+////++=============////++=============
+////++=============////++=============
+////++=============////++=============
 
 func YahooWeatherApiSTUB(ctx *gin.Context, location string) (utils.Data, error) {
 	file, err := ioutil.ReadFile("./stubsJSON/responseYahoo")
