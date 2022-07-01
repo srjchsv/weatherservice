@@ -1,0 +1,34 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/styles.css">
+    <title>GophersWeatherService</title>
+</head>
+<body>
+    <h1>GophersWeatherService</h1>
+    {{ .locationCheck}}
+    <div class="header">
+       <form action="" method="get">
+        <label for="location">Location:</label>
+        <input type="text" class="location" name="location">
+        <input type="submit" value="check weather">
+       </form>
+    </div>
+    <div class="row">
+        {{ range .weatherData}}
+        <div class="column">
+            <h3>{{ .Name }}</h3>
+            <p>{{.Location }}</p>
+            <p>{{.Temperature }}℃</p>
+        </div>
+      {{end}}
+    </div>
+    <div class="footer">
+        <p class="footer-text">2022</p>
+    </div>
+</body>
+</html>
