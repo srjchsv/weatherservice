@@ -1,9 +1,9 @@
-package weatherapi
+package weatherservices
 
 import (
 	"encoding/json"
 	"io/ioutil"
-	"net/http"
+	"net/url"
 
 	"github.com/gin-gonic/gin"
 	"github.com/srjchsv/weatherservice/pkg/utils"
@@ -19,21 +19,11 @@ type WeatherApiResponseStruct struct {
 }
 
 func WeatherApi(ctx *gin.Context, location string) (utils.Data, error) {
-	apiConfig, err := utils.LoadApiConfig(ctx, "./configs/.configs")
-	if err != nil {
-		return utils.Data{}, err
-	}
-	url := "https://weatherapi-com.p.rapidapi.com/current.json?q=" + location
 
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return utils.Data{}, err
-	}
+	url := "https://weatherapi-com.p.rapidapi.com/current.json?q=" + url.QueryEscape(location)
+	apiHost := "weatherapi-com.p.rapidapi.com"
 
-	req.Header.Add("X-RapidAPI-Key", apiConfig.OpenWeatherMapApiKey)
-	req.Header.Add("X-RapidAPI-Host", "weatherapi-com.p.rapidapi.com")
-
-	res, err := http.DefaultClient.Do(req)
+	res, err := utils.RequestResponseRapidApi(ctx, url, apiHost)
 	if err != nil {
 		return utils.Data{}, err
 	}

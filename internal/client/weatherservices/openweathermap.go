@@ -1,9 +1,9 @@
-package openweathermap
+package weatherservices
 
 import (
 	"encoding/json"
 	"io/ioutil"
-	"net/http"
+	"net/url"
 
 	"github.com/gin-gonic/gin"
 	"github.com/srjchsv/weatherservice/pkg/utils"
@@ -17,28 +17,18 @@ type OpenWeatherResponseStruct struct {
 }
 
 func OpenWeatherMapApi(ctx *gin.Context, location string) (utils.Data, error) {
-	apiConfig, err := utils.LoadApiConfig(ctx, "./configs/.configs")
-	if err != nil {
-		return utils.Data{}, err
-	}
 
-	url := "https://community-open-weather-map.p.rapidapi.com/weather?q=" + location + "&lat=0&lon=0&id=2172797&lang=null&units=metric&mode=json"
+	url := "https://community-open-weather-map.p.rapidapi.com/weather?q=" + url.QueryEscape(location) + "&lat=0&lon=0&id=2172797&lang=null&units=metric&mode=json"
 
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return utils.Data{}, err
-	}
-	
-	req.Header.Add("X-RapidAPI-Key", apiConfig.OpenWeatherMapApiKey)
-	req.Header.Add("X-RapidAPI-Host", "community-open-weather-map.p.rapidapi.com")
+	apiHost := "community-open-weather-map.p.rapidapi.com"
 
-	res, err := http.DefaultClient.Do(req)
+	var d OpenWeatherResponseStruct
+
+	res, err := utils.RequestResponseRapidApi(ctx, url, apiHost)
 	if err != nil {
 		return utils.Data{}, err
 	}
 	defer res.Body.Close()
-
-	var d OpenWeatherResponseStruct
 
 	if err := json.NewDecoder(res.Body).Decode(&d); err != nil {
 		return utils.Data{}, err
@@ -63,7 +53,7 @@ func OpenWeatherMapApi(ctx *gin.Context, location string) (utils.Data, error) {
 func OpenWeatherMapApiSTUB(ctx *gin.Context, location string) (utils.Data, error) {
 
 	//save response to file
-	file, err := ioutil.ReadFile("./stubsJSON/response.json")
+	file, err := ioutil.ReadFile("./stubsJSON/responseOpenWeatherMap")
 	if err != nil {
 		return utils.Data{}, err
 	}
