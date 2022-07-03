@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -10,12 +11,40 @@ import (
 )
 
 var (
-	configs = LoadApiConfig("./configs/.configs")
-	APIKEY  = configs.RapidApiKey
+	configs = LoadApiConfig(getEnv("APP_APIKEY_PATH", "./configs/.configs"))
+
+	APIKEY = configs.RapidApiKey
+
+	URLyahoo          = configs.Url.YahooWeather
+	URLopenWeatherMap = configs.Url.OpenWeatherMap
+	URLweatherApi     = configs.Url.WeatherApi
+
+	APIhostYahoo          = configs.ApiHost.YahooWeather
+	APIhostOpenWeatherMap = configs.ApiHost.OpenWeatherMap
+	APIhostWeatherApi     = configs.ApiHost.WeatherApi
 )
+
+//getEnv gets the enviroment variable
+func getEnv(key, fallback string) string {
+	value := os.Getenv(key)
+	if len(value) == 0 {
+		return fallback
+	}
+	return value
+}
 
 type apiConfigData struct {
 	RapidApiKey string `json:"RapidApiKey"`
+	Url         struct {
+		OpenWeatherMap string `json:"OpenWeatherMap"`
+		YahooWeather   string `json:"YahooWeather"`
+		WeatherApi     string `json:"WeatherApi"`
+	} `json:"Url"`
+	ApiHost struct {
+		OpenWeatherMap string `json:"OpenWeatherMap"`
+		YahooWeather   string `json:"YahooWeather"`
+		WeatherApi     string `json:"WeatherApi"`
+	} `json:"ApiHost"`
 }
 
 type Data struct {
@@ -56,7 +85,9 @@ func LoadApiConfig(filename string) apiConfigData {
 	if err != nil {
 		os.Exit(2)
 	}
-
 	return c
+}
 
+func printWord() {
+	fmt.Println("ok")
 }
