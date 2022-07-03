@@ -3,11 +3,12 @@ package weatherservices
 import (
 	"encoding/json"
 	"io/ioutil"
-	"net/url"
 
 	"github.com/gin-gonic/gin"
-	"github.com/srjchsv/weatherservice/pkg/utils"
+	"github.com/srjchsv/weatherservice/internal/utils"
 )
+
+var WeatherApi WeatherApiResponseStruct
 
 type WeatherApiResponseStruct struct {
 	Location struct {
@@ -18,46 +19,40 @@ type WeatherApiResponseStruct struct {
 	} `json:"current"`
 }
 
-func WeatherApi(ctx *gin.Context, location string) (utils.Data, error) {
+//func (ws *WeatherApiResponseStruct) GetWeather(ctx *gin.Context, location string) (utils.Data, error) {
+//	url := utils.URLweatherApi + "?q=" + url.QueryEscape(location)
+//	apiHost := utils.APIhostWeatherApi
+//
+//	res, err := utils.RequestResponseRapidApi(ctx, url, apiHost)
+//	if err != nil {
+//		return utils.Data{}, err
+//	}
+//	defer res.Body.Close()
+//
+//	var d WeatherApiResponseStruct
+//
+//	if err := json.NewDecoder(res.Body).Decode(&d); err != nil {
+//		return utils.Data{}, err
+//	}
+//
+//	stdData := utils.Data{
+//		Name:        "WeatherApi",
+//		Location:    d.Location.Name,
+//		Temperature: d.Current.Celsius,
+//	}
+//	return stdData, nil
+//}
 
-	url := "https://weatherapi-com.p.rapidapi.com/current.json?q=" + url.QueryEscape(location)
-	apiHost := "weatherapi-com.p.rapidapi.com"
+//STUBS
 
-	res, err := utils.RequestResponseRapidApi(ctx, url, apiHost)
-	if err != nil {
-		return utils.Data{}, err
-	}
-	defer res.Body.Close()
-
-	var d WeatherApiResponseStruct
-
-	if err := json.NewDecoder(res.Body).Decode(&d); err != nil {
-		return utils.Data{}, err
-	}
-
-	stdData := utils.Data{
-		Name:        "WeatherApi",
-		Location:    d.Location.Name,
-		Temperature: d.Current.Celsius,
-	}
-	return stdData, nil
-}
-
-////++=============////++=============
-////++=============////++=============
-////++=============////++=============
-////++=============////++=============
-////++=============////++=============
-////++=============////++=============
-
-func WeatherApiSTUB(ctx *gin.Context, location string) (utils.Data, error) {
+func (ws *WeatherApiResponseStruct) GetWeather(ctx *gin.Context, location string) (utils.Data, error) {
 	file, err := ioutil.ReadFile("./stubsJSON/responseWeatherApi")
 	if err != nil {
 		return utils.Data{}, err
 	}
 	var d WeatherApiResponseStruct
 
-	_ = json.Unmarshal([]byte(file), &d)
+	_ = json.Unmarshal(file, &d)
 
 	stdData := utils.Data{
 		Name:        "WeatherApi",
