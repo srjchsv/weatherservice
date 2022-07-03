@@ -2,11 +2,7 @@ module github.com/srjchsv/weatherservice
 
 go 1.18
 
-require (
-	github.com/gin-gonic/gin v1.8.1
-	github.com/thinkerou/favicon v0.1.0
-	golang.org/x/sync v0.0.0-20220601150217-0de741cfad7f
-)
+require github.com/gin-gonic/gin v1.8.1
 
 require (
 	github.com/gin-contrib/sse v0.1.0 // indirect

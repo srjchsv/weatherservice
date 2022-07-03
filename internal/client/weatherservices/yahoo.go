@@ -3,12 +3,11 @@ package weatherservices
 import (
 	"encoding/json"
 	"io/ioutil"
+	"net/url"
 
 	"github.com/gin-gonic/gin"
-	"github.com/srjchsv/weatherservice/internal/utils"
+	"github.com/srjchsv/weatherservice/pkg/utils"
 )
-
-var YahooApi YahooResponseStruct
 
 type YahooResponseStruct struct {
 	Location struct {
@@ -21,34 +20,41 @@ type YahooResponseStruct struct {
 	} `json:"current_observation"`
 }
 
-// func (ws *YahooResponseStruct) GetWeather(ctx *gin.Context, location string) (utils.Data, error) {
-// 	url := utils.URLyahoo + "?location=" + url.QueryEscape(location) + "&format=json&u=c"
-// 	apiHost := utils.APIhostYahoo
+func YahooWeatherApi(ctx *gin.Context, location string) (utils.Data, error) {
 
-// 	res, err := utils.RequestResponseRapidApi(ctx, url, apiHost)
-// 	if err != nil {
-// 		return utils.Data{}, err
-// 	}
-// 	defer res.Body.Close()
+	url := "https://yahoo-weather5.p.rapidapi.com/weather?location=" + url.QueryEscape(location) + "&format=json&u=c"
+	apiHost := "yahoo-weather5.p.rapidapi.com"
 
-// 	var d YahooResponseStruct
+	res, err := utils.RequestResponseRapidApi(ctx, url, apiHost)
+	if err != nil {
+		return utils.Data{}, err
+	}
+	defer res.Body.Close()
 
-// 	if err := json.NewDecoder(res.Body).Decode(&d); err != nil {
-// 		return utils.Data{}, err
-// 	}
+	var d YahooResponseStruct
 
-// 	stdData := utils.Data{
-// 		Name:        "YahooRapidApi",
-// 		Location:    d.Location.Name,
-// 		Temperature: d.Main.Condition.Celsius,
-// 	}
+	if err := json.NewDecoder(res.Body).Decode(&d); err != nil {
+		return utils.Data{}, err
+	}
 
-// 	return stdData, nil
-// }
+	stdData := utils.Data{
+		Name:        "YahooRapidApi",
+		Location:    d.Location.Name,
+		Temperature: d.Main.Condition.Celsius,
+	}
 
-//STUB
+	return stdData, nil
 
-func (ws *YahooResponseStruct) GetWeather(ctx *gin.Context, location string) (utils.Data, error) {
+}
+
+////++=============////++=============
+////++=============////++=============
+////++=============////++=============
+////++=============////++=============
+////++=============////++=============
+////++=============////++=============
+
+func YahooWeatherApiSTUB(ctx *gin.Context, location string) (utils.Data, error) {
 	file, err := ioutil.ReadFile("./stubsJSON/responseYahoo")
 	if err != nil {
 		return utils.Data{}, err
@@ -56,7 +62,7 @@ func (ws *YahooResponseStruct) GetWeather(ctx *gin.Context, location string) (ut
 
 	var d YahooResponseStruct
 
-	_ = json.Unmarshal(file, &d)
+	_ = json.Unmarshal([]byte(file), &d)
 
 	stdData := utils.Data{
 		Name:        "YahooRapidApi",
