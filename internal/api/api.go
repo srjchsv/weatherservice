@@ -1,42 +1,57 @@
 package api
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/gin-gonic/gin"
 	"github.com/srjchsv/weatherservice/internal/client/weatherservices"
-	"github.com/srjchsv/weatherservice/pkg/utils"
+	"github.com/srjchsv/weatherservice/internal/utils"
+	"golang.org/x/sync/errgroup"
 )
 
 var (
-	wg sync.WaitGroup
 	mu sync.RWMutex
+	eg errgroup.Group
 )
 
+type WeatherServiceApis interface {
+	GetWeather(ctx *gin.Context, location string) (utils.Data, error)
+}
+
+//WeatherService gets weather data from all available services
 func WeatherService(ctx *gin.Context, location string) ([]utils.Data, error) {
 	weatherChan := []utils.Data{}
 
-	services := []func(ctx *gin.Context, location string) (utils.Data, error){
-		weatherservices.WeatherApi,
-		weatherservices.YahooWeatherApi,
-		weatherservices.OpenWeatherMapApi,
+	services := []WeatherServiceApis{
+		&weatherservices.OpenWeatherMapApi,
+		&weatherservices.YahooApi,
+		&weatherservices.WeatherApi,
 	}
 
 	for _, api := range services {
-		wg.Add(1)
-		go func(api func(ctx *gin.Context, location string) (utils.Data, error)) error {
-			defer wg.Done()
-			defer mu.Unlock()
-			data, err := api(ctx, location)
-			if err != nil {
-				return err
-			}
-			mu.Lock()
-			weatherChan = append(weatherChan, data)
+		goApi := api
+		eg.Go(func() error {
+			return func(api WeatherServiceApis, ctx *gin.Context, location string) error {
+				defer mu.Unlock()
+				data, err := api.GetWeather(ctx, location)
+				if err != nil {
+					return err
+				}
+				mu.Lock()
+				weatherChan = append(weatherChan, data)
 
-			return nil
-		}(api)
+				return nil
+			}(goApi, ctx, location)
+		})
 	}
-	wg.Wait()
+	if err := eg.Wait(); err != nil {
+		return weatherChan, err
+	}
+
 	return weatherChan, nil
+}
+
+func printWord() {
+	fmt.Println("ok")
 }

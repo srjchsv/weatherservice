@@ -1,2 +1,5 @@
 configs/
 main.go
+.vscode
+main
+.idea

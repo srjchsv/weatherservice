@@ -9,6 +9,7 @@ import (
 	"github.com/srjchsv/weatherservice/internal/api"
 )
 
+//GetLocation is handling get requests for the location input
 func GetLocation(ctx *gin.Context) {
 	r, err := regexp.Compile(`^[a-zA-Z',.\s-]{1,25}$`)
 	if err != nil {
@@ -20,18 +21,23 @@ func GetLocation(ctx *gin.Context) {
 
 	if len(location) == 0 {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{})
-	} else if r.MatchString(location) {
+		return
+	}
+
+	if !r.MatchString(location) {
+		ctx.String(http.StatusBadRequest, "Bad request")
+		return
+	}
+
+	if r.MatchString(location) {
 		weatherData, err := api.WeatherService(ctx, location)
 		if err != nil {
 			ctx.String(http.StatusInternalServerError, fmt.Sprintln(err))
+			return
 		}
-
 		ctx.HTML(http.StatusOK, "index.html", gin.H{
 			"weatherData": weatherData,
 			"location":    location,
 		})
-
-	} else {
-		ctx.String(http.StatusBadRequest, "Bad request")
 	}
 }
