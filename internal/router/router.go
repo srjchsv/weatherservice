@@ -21,7 +21,3 @@ func RegisterRouter() *gin.Engine {
 
 	return r
 }
-
-func printWord() {
-	fmt.Println("ok")
-}
