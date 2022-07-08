@@ -1,5 +1,5 @@
-configs/
+configs/.configs
+configs/.services
 main.go
 .vscode
-main
 .idea

@@ -1,18 +1,23 @@
 package api
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/gin-gonic/gin"
-	"github.com/srjchsv/weatherservice/internal/client/weatherservices"
 	"github.com/srjchsv/weatherservice/internal/utils"
 	"golang.org/x/sync/errgroup"
 )
 
 var (
-	mu sync.RWMutex
-	eg errgroup.Group
+	mu       sync.RWMutex
+	eg       errgroup.Group
+	Configs  utils.ApiConfigData
+	services []WeatherServiceApis
+	
+	Services = func(cfg utils.ApiConfigData, arr []WeatherServiceApis) {
+		services = arr
+		Configs = cfg
+	}
 )
 
 type WeatherServiceApis interface {
@@ -21,13 +26,7 @@ type WeatherServiceApis interface {
 
 //WeatherService gets weather data from all available services
 func WeatherService(ctx *gin.Context, location string) ([]utils.Data, error) {
-	weatherChan := []utils.Data{}
-
-	services := []WeatherServiceApis{
-		&weatherservices.OpenWeatherMapApi,
-		&weatherservices.YahooApi,
-		&weatherservices.WeatherApi,
-	}
+	allData := []utils.Data{}
 
 	for _, api := range services {
 		goApi := api
@@ -39,19 +38,14 @@ func WeatherService(ctx *gin.Context, location string) ([]utils.Data, error) {
 					return err
 				}
 				mu.Lock()
-				weatherChan = append(weatherChan, data)
+				allData = append(allData, data)
 
 				return nil
 			}(goApi, ctx, location)
 		})
 	}
 	if err := eg.Wait(); err != nil {
-		return weatherChan, err
+		return allData, err
 	}
-
-	return weatherChan, nil
-}
-
-func printWord() {
-	fmt.Println("ok")
+	return allData, nil
 }

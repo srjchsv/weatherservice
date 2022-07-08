@@ -2,30 +2,16 @@ package utils
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
-var (
-	configs = LoadApiConfig(getEnv("APP_APIKEY_PATH", "./configs/.configs"))
-
-	APIKEY = configs.RapidApiKey
-
-	URLyahoo          = configs.Url.YahooWeather
-	URLopenWeatherMap = configs.Url.OpenWeatherMap
-	URLweatherApi     = configs.Url.WeatherApi
-
-	APIhostYahoo          = configs.ApiHost.YahooWeather
-	APIhostOpenWeatherMap = configs.ApiHost.OpenWeatherMap
-	APIhostWeatherApi     = configs.ApiHost.WeatherApi
-)
-
-//getEnv gets the enviroment variable
-func getEnv(key, fallback string) string {
+//GetEnv gets the enviroment variable
+func GetEnv(key, fallback string) string {
 	value := os.Getenv(key)
 	if len(value) == 0 {
 		return fallback
@@ -33,7 +19,7 @@ func getEnv(key, fallback string) string {
 	return value
 }
 
-type apiConfigData struct {
+type ApiConfigData struct {
 	RapidApiKey string `json:"RapidApiKey"`
 	Url         struct {
 		OpenWeatherMap string `json:"OpenWeatherMap"`
@@ -54,14 +40,14 @@ type Data struct {
 }
 
 //RequestResponseRapidApi sends http request and get response from rapid api
-func RequestResponseRapidApi(ctx *gin.Context, url, apiHost string) (*http.Response, error) {
+func RequestResponseRapidApi(ctx *gin.Context, url, apiHost, apiKey string) (*http.Response, error) {
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return &http.Response{}, err
 	}
 
-	req.Header.Add("X-RapidAPI-Key", APIKEY)
+	req.Header.Add("X-RapidAPI-Key", apiKey)
 	req.Header.Add("X-RapidAPI-Host", apiHost)
 
 	res, err := http.DefaultClient.Do(req)
@@ -73,21 +59,41 @@ func RequestResponseRapidApi(ctx *gin.Context, url, apiHost string) (*http.Respo
 }
 
 //LoadApiConfig loads api configs
-func LoadApiConfig(filename string) apiConfigData {
+func LoadApiConfig(filename string) ApiConfigData {
 	bytes, err := ioutil.ReadFile(filename)
 	if err != nil {
-		os.Exit(2)
+		log.Info(err)
 	}
 
-	var c apiConfigData
+	var c ApiConfigData
 
 	err = json.Unmarshal(bytes, &c)
 	if err != nil {
-		os.Exit(2)
+		log.Info(err)
 	}
 	return c
 }
 
-func printWord() {
-	fmt.Println("ok")
-}
+// type Provider struct {
+// 	Name string `json:"name"`
+// 	Url  string `json:"url"`
+// 	Host string `json:"host"`
+// }
+
+// type Providers struct {
+// 	Key       string     `json:"key"`
+// 	Providers []Provider `json:"services"`
+// }
+
+// func LoadConfig(filename string) Providers {
+// 	bytes, err := ioutil.ReadFile(filename)
+// 	if err != nil {
+// 		log.Info(err)
+// 	}
+// 	var providers Providers
+// 	err = json.Unmarshal(bytes, &providers)
+// 	if err != nil {
+// 		log.Info(err)
+// 	}
+// 	return providers
+// }
