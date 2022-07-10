@@ -3,3 +3,4 @@ configs/.services
 main.go
 .vscode
 .idea
+main
