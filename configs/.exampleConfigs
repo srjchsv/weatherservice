@@ -1,14 +1,20 @@
 {
-    "RapidApiKey" : "YourRapidApiKeyHERE",
-    "Url" : {
-        "OpenWeatherMap": "https://community-open-weather-map.p.rapidapi.com/weather" ,
-        "YahooWeather":"https://yahoo-weather5.p.rapidapi.com/weather" ,
-        "WeatherApi" :"https://weatherapi-com.p.rapidapi.com/current.json"
-    },
-    "ApiHost" : {
-        "OpenWeatherMap":  "community-open-weather-map.p.rapidapi.com",
-        "YahooWeather":"yahoo-weather5.p.rapidapi.com",
-        "WeatherApi" : "weatherapi-com.p.rapidapi.com"
-    }
-
+    "key": "yourRapidApiKeyHERE",
+    "services": [
+        {
+            "name": "OpenWeatherMap",
+            "url": "https://community-open-weather-map.p.rapidapi.com/weather",
+            "host": "community-open-weather-map.p.rapidapi.com"
+        },
+        {
+            "name": "YahooWeather",
+            "url": "https://yahoo-weather5.p.rapidapi.com/weather",
+            "host": "yahoo-weather5.p.rapidapi.com"
+        },
+        {
+            "name": "WeatherApi",
+            "url": "https://weatherapi-com.p.rapidapi.com/current.json",
+            "host": "weatherapi-com.p.rapidapi.com"
+        }
+    ]
 }

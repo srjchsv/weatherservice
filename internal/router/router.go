@@ -1,14 +1,12 @@
 package router
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/srjchsv/weatherservice/internal/handlers"
 	"github.com/thinkerou/favicon"
 )
 
-func RegisterRouter() *gin.Engine {
+func RegisterRouter(weatherService *handlers.WeatherService) *gin.Engine {
 	r := gin.Default()
 	r.Static("/styles", "./templates/styles")
 	r.Use(favicon.New("./templates/resources/favicon.ico"))
@@ -16,7 +14,7 @@ func RegisterRouter() *gin.Engine {
 
 	home := r.Group("/")
 	{
-		home.GET("/", handlers.GetLocation)
+		home.GET("/", weatherService.Handle)
 	}
 
 	return r
