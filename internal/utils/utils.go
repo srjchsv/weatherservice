@@ -9,24 +9,21 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type ApiConfigData struct {
-	RapidApiKey string `json:"RapidApiKey"`
-	Url         struct {
-		OpenWeatherMap string `json:"OpenWeatherMap"`
-		YahooWeather   string `json:"YahooWeather"`
-		WeatherApi     string `json:"WeatherApi"`
-	} `json:"Url"`
-	ApiHost struct {
-		OpenWeatherMap string `json:"OpenWeatherMap"`
-		YahooWeather   string `json:"YahooWeather"`
-		WeatherApi     string `json:"WeatherApi"`
-	} `json:"ApiHost"`
-}
-
 type Data struct {
 	Name        string
 	Location    string
 	Temperature float64
+}
+
+type Provider struct {
+	Name string `json:"name"`
+	Url  string `json:"url"`
+	Host string `json:"host"`
+}
+
+type Providers struct {
+	Key       string     `json:"key"`
+	Providers []Provider `json:"services"`
 }
 
 //GetEnv gets the enviroment variable
@@ -54,27 +51,7 @@ func RequestResponseRapidApi(ctx *gin.Context, url, apiHost, apiKey string, clie
 	return res, nil
 }
 
-//LoadApiConfig loads api configs
-func LoadApiConfig(bytes []byte) ApiConfigData {
-	var c ApiConfigData
-	err := json.Unmarshal(bytes, &c)
-	if err != nil {
-		log.Info(err)
-	}
-	return c
-}
-
-type Provider struct {
-	Name string `json:"name"`
-	Url  string `json:"url"`
-	Host string `json:"host"`
-}
-
-type Providers struct {
-	Key       string     `json:"key"`
-	Providers []Provider `json:"services"`
-}
-
+//LoadConfig parses JSON config into a struct
 func LoadConfig(bytes []byte) Providers {
 	var providers Providers
 	err := json.Unmarshal(bytes, &providers)
