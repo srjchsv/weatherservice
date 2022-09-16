@@ -14,9 +14,8 @@ body {
     background-color: burlywood;
     padding: 30px;
     text-align: center;
-    font-size: 35px;
     min-height: 10vh;
- 
+
 }
 
 .row {
@@ -34,9 +33,6 @@ body {
 }
 input {
     height: 40px;
-    font-size: medium;
-    font-weight: bold;
-   
 }
 
 .footer {

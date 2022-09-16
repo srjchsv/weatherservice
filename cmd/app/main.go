@@ -25,19 +25,15 @@ func main() {
 
 	//Map of response structs for services
 	m := make(map[string]interface{})
-	m["OpenWeatherMap"] = weatherservices.OpenWeatherResponse{}
 	m["YahooWeather"] = weatherservices.YahooResponse{}
 	m["WeatherApi"] = weatherservices.WeatherApiResponse{}
 
 	var apis []handlers.WeatherServiceApis
 
 	//Initialize services
-	ch := make(chan *weatherservices.WeatherApi, len(m))
 	for _, val := range cfg.Providers {
-		go func() {
-			ch <- weatherservices.NewWeatherApi(val.Host, cfg.Key, val.Url, val.Name, client, m[val.Name])
-		}()
-		apis = append(apis, <-ch)
+		api := weatherservices.NewWeatherApi(val.Host, cfg.Key, val.Url, val.Name, client, m[val.Name])
+		apis = append(apis, api)
 	}
 	//Pass services to weather service handler
 	weatherService, err := handlers.NewWeatherService(apis)
