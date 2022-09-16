@@ -38,7 +38,7 @@ func NewWeatherService(services []WeatherServiceApis) (*WeatherService, error) {
 	}, nil
 }
 
-//Handle gets weather data from all available services
+// Handle gets weather data from all available services
 func (ws *WeatherService) Handle(ctx *gin.Context) {
 	location := ctx.Query("location")
 
@@ -48,7 +48,9 @@ func (ws *WeatherService) Handle(ctx *gin.Context) {
 	}
 
 	if !LocationRegexp.MatchString(location) {
-		ctx.String(http.StatusBadRequest, "Bad request")
+		ctx.HTML(http.StatusBadRequest, "index.html", gin.H{
+			"location": "BAD REQUEST",
+		})
 		return
 	}
 
@@ -77,7 +79,21 @@ func (ws *WeatherService) Handle(ctx *gin.Context) {
 		ctx.String(http.StatusInternalServerError, fmt.Sprintln(err))
 		return
 	}
-
+	lenghtProviders := len(allData)
+	count := 0
+	for i := range allData {
+		if allData[i].Location == "" {
+			allData[i].Location = "No respose from the provider...sorry"
+			count++
+		}
+		if lenghtProviders == count {
+			ctx.HTML(http.StatusServiceUnavailable, "index.html", gin.H{
+				"weatherData": allData,
+				"location":    location,
+			})
+			return
+		}
+	}
 	ctx.HTML(http.StatusOK, "index.html", gin.H{
 		"weatherData": allData,
 		"location":    location,

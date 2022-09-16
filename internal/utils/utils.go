@@ -37,16 +37,16 @@ func GetEnv(key, fallback string) string {
 
 //RequestResponseRapidApi sends http request and get response from rapid api
 func RequestResponseRapidApi(ctx *gin.Context, url, apiHost, apiKey string, client *http.Client) (*http.Response, error) {
-	req, err := http.NewRequestWithContext(ctx.Request.Context(), "GET", url, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
-		return &http.Response{}, err
+		return nil, err
 	}
 	req.Header.Add("X-RapidAPI-Key", apiKey)
 	req.Header.Add("X-RapidAPI-Host", apiHost)
 
 	res, err := client.Do(req)
 	if err != nil {
-		return &http.Response{}, err
+		return nil, err
 	}
 	return res, nil
 }
