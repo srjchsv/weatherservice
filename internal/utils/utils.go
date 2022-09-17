@@ -3,7 +3,6 @@ package utils
 import (
 	"encoding/json"
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -26,16 +25,7 @@ type Providers struct {
 	Providers []Provider `json:"services"`
 }
 
-//GetEnv gets the enviroment variable
-func GetEnv(key, fallback string) string {
-	value := os.Getenv(key)
-	if len(value) == 0 {
-		return fallback
-	}
-	return value
-}
-
-//RequestResponseRapidApi sends http request and get response from rapid api
+// RequestResponseRapidApi sends http request and get response from rapid api
 func RequestResponseRapidApi(ctx *gin.Context, url, apiHost, apiKey string, client *http.Client) (*http.Response, error) {
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
@@ -51,7 +41,7 @@ func RequestResponseRapidApi(ctx *gin.Context, url, apiHost, apiKey string, clie
 	return res, nil
 }
 
-//LoadConfig parses JSON config into a struct
+// LoadConfig parses JSON config into a struct
 func LoadConfig(bytes []byte) Providers {
 	var providers Providers
 	err := json.Unmarshal(bytes, &providers)

@@ -3,8 +3,10 @@ package main
 import (
 	"io/ioutil"
 	"net/http"
+	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
 	"github.com/srjchsv/weatherservice/internal/client/weatherservices"
 	"github.com/srjchsv/weatherservice/internal/handlers"
@@ -13,8 +15,17 @@ import (
 )
 
 func main() {
+	// Load env
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal(err)
+	}
+	apiKey := os.Getenv("APIKEY")
+	if apiKey == "" {
+		log.Fatal("error no api key.")
+	}
 	//Read configs
-	bytes, err := ioutil.ReadFile(utils.GetEnv("APP_APIKEY_PATH", "./configs/.configs"))
+	bytes, err := ioutil.ReadFile("./configs/.configs")
 	if err != nil {
 		log.Info(err)
 	}
@@ -32,7 +43,7 @@ func main() {
 
 	//Initialize services
 	for _, val := range cfg.Providers {
-		api := weatherservices.NewWeatherApi(val.Host, cfg.Key, val.Url, val.Name, client, m[val.Name])
+		api := weatherservices.NewWeatherApi(val.Host, apiKey, val.Url, val.Name, client, m[val.Name])
 		apis = append(apis, api)
 	}
 	//Pass services to weather service handler

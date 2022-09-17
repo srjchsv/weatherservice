@@ -1,11 +1,6 @@
 {
-    "key": "yourRapidApiKeyHERE",
     "services": [
-        {
-            "name": "OpenWeatherMap",
-            "url": "https://community-open-weather-map.p.rapidapi.com/weather",
-            "host": "community-open-weather-map.p.rapidapi.com"
-        },
+
         {
             "name": "YahooWeather",
             "url": "https://yahoo-weather5.p.rapidapi.com/weather",
