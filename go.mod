@@ -4,19 +4,12 @@ go 1.18
 
 require (
 	github.com/gin-gonic/gin v1.8.1
+	github.com/joho/godotenv v1.4.0
 	github.com/thinkerou/favicon v0.1.0
 	golang.org/x/sync v0.0.0-20220601150217-0de741cfad7f
 )
 
-require (
-	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542 // indirect
-	github.com/jarcoal/httpmock v1.2.0 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/stretchr/testify v1.8.0 // indirect
-	gopkg.in/h2non/gock.v1 v1.1.2 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
-)
+require github.com/stretchr/testify v1.8.0 // indirect
 
 require (
 	github.com/gin-contrib/sse v0.1.0 // indirect

@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"os"
 	"reflect"
 	"testing"
 )
@@ -27,46 +26,6 @@ var bytes = []byte(`{
     ]
 }
 `)
-
-func TestGetEnv(t *testing.T) {
-	type args struct {
-		key      string
-		fallback string
-	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		// TODO: Add test cases.
-		{
-			name: "one",
-			args: args{
-				key:      "",
-				fallback: "fallback",
-			},
-			want: "fallback",
-		},
-		{
-			name: "two",
-			args: args{
-				key:      "key",
-				fallback: "fallback",
-			},
-			want: "key",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if len(tt.args.key) != 0 {
-				os.Setenv("key", "key")
-			}
-			if got := GetEnv(tt.args.key, tt.args.fallback); got != tt.want {
-				t.Errorf("GetEnv() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
 func TestLoadApiConfig(t *testing.T) {
 	type args struct {
